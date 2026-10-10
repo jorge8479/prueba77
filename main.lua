@@ -1,0 +1,180 @@
+-- ========================================================
+-- PANEL DE FLY - ROBLOX (Velocidad 15)
+-- ========================================================
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+-- Variables de vuelo
+local flying = false
+local speed = 200
+local bg, bv
+
+-- ==========================================
+-- CREACIÓN DE LA INTERFAZ
+-- ==========================================
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "FlyPanelUI"
+ScreenGui.ResetOnSpawn = false
+
+-- Intentar ponerlo en CoreGui para que no desaparezca (si se usa un ejecutor)
+local success = pcall(function() ScreenGui.Parent = CoreGui end)
+if not success then
+    ScreenGui.Parent = player:WaitForChild("PlayerGui")
+end
+
+-- ==========================================
+-- BOLITA NEGRA (Botón de abrir)
+-- ==========================================
+local OpenButton = Instance.new("TextButton")
+OpenButton.Size = UDim2.new(0, 45, 0, 45)
+OpenButton.Position = UDim2.new(0, 20, 0.5, -22) -- A la izquierda de la pantalla
+OpenButton.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+OpenButton.Text = "✈️"
+OpenButton.TextSize = 20
+OpenButton.Visible = false -- Oculto por defecto
+OpenButton.Parent = ScreenGui
+
+local OpenCorner = Instance.new("UICorner")
+OpenCorner.CornerRadius = UDim.new(1, 0) -- Lo hace totalmente circular
+OpenCorner.Parent = OpenButton
+
+-- Sombra para la bolita
+local OpenStroke = Instance.new("UIStroke")
+OpenStroke.Color = Color3.fromRGB(255, 255, 255)
+OpenStroke.Thickness = 1.5
+OpenStroke.Parent = OpenButton
+
+-- ==========================================
+-- PANEL PRINCIPAL
+-- ==========================================
+local MainPanel = Instance.new("Frame")
+MainPanel.Size = UDim2.new(0, 250, 0, 160)
+MainPanel.Position = UDim2.new(0.5, -125, 0.5, -80)
+MainPanel.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+MainPanel.BorderSizePixel = 0
+MainPanel.Active = true
+MainPanel.Draggable = true -- Permite mover la ventana por la pantalla
+MainPanel.Parent = ScreenGui
+
+local PanelCorner = Instance.new("UICorner")
+PanelCorner.CornerRadius = UDim.new(0, 12)
+PanelCorner.Parent = MainPanel
+
+-- Título del panel
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.BackgroundTransparency = 1
+Title.Text = "Fly Panel ✨"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.Parent = MainPanel
+
+-- Botón X (Cerrar / Minimizar)
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 14
+CloseButton.Parent = MainPanel
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(1, 0)
+CloseCorner.Parent = CloseButton
+
+-- Botón de Fly (Rojo a Verde)
+local FlyButton = Instance.new("TextButton")
+FlyButton.Size = UDim2.new(0, 180, 0, 50)
+FlyButton.Position = UDim2.new(0.5, -90, 0.6, -15)
+FlyButton.BackgroundColor3 = Color3.fromRGB(220, 50, 50) -- Rojo inicial
+FlyButton.Text = "Activar Fly"
+FlyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyButton.Font = Enum.Font.GothamBold
+FlyButton.TextSize = 18
+FlyButton.Parent = MainPanel
+
+local FlyCorner = Instance.new("UICorner")
+FlyCorner.CornerRadius = UDim.new(0, 8)
+FlyCorner.Parent = FlyButton
+
+-- ==========================================
+-- LÓGICA DE LOS BOTONES
+-- ==========================================
+
+-- Minimizar panel (Botón X)
+CloseButton.MouseButton1Click:Connect(function()
+    MainPanel.Visible = false
+    OpenButton.Visible = true
+end)
+
+-- Abrir panel (Bolita negra)
+OpenButton.MouseButton1Click:Connect(function()
+    MainPanel.Visible = true
+    OpenButton.Visible = false
+end)
+
+-- Lógica del Vuelo
+FlyButton.MouseButton1Click:Connect(function()
+    flying = not flying
+    local character = player.Character or player.CharacterAdded:Wait()
+    local rootPart = character:WaitForChild("HumanoidRootPart")
+    local humanoid = character:WaitForChild("Humanoid")
+
+    if flying then
+        -- Cambiar a Verde
+        FlyButton.BackgroundColor3 = Color3.fromRGB(50, 200, 80)
+        FlyButton.Text = "Desactivar Fly"
+
+        -- Activar mecánicas de vuelo
+        humanoid.PlatformStand = true
+        
+        bg = Instance.new("BodyGyro", rootPart)
+        bg.P = 9e4
+        bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+        bg.cframe = rootPart.CFrame
+        
+        bv = Instance.new("BodyVelocity", rootPart)
+        bv.velocity = Vector3.new(0,0,0)
+        bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+
+        -- Bucle para mover al jugador hacia donde mire la cámara
+        RunService:BindToRenderStep("FlyLoop", Enum.RenderPriority.Camera.Value, function()
+            local moveDir = Vector3.new()
+            
+            -- Teclas de movimiento (W, A, S, D)
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + camera.CFrame.LookVector end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - camera.CFrame.LookVector end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - camera.CFrame.RightVector end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + camera.CFrame.RightVector end
+            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0, 1, 0) end
+            if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir = moveDir - Vector3.new(0, 1, 0) end
+            
+            bg.cframe = camera.CFrame
+            
+            if moveDir.Magnitude > 0 then
+                bv.velocity = moveDir.Unit * speed
+            else
+                bv.velocity = Vector3.new(0,0,0)
+            end
+        end)
+    else
+        -- Cambiar a Rojo
+        FlyButton.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+        FlyButton.Text = "Activar Fly"
+
+        -- Desactivar vuelo
+        humanoid.PlatformStand = false
+        if bg then bg:Destroy() end
+        if bv then bv:Destroy() end
+        RunService:UnbindFromRenderStep("FlyLoop")
+    end
+end)
