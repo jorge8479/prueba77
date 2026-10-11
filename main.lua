@@ -1,5 +1,5 @@
 -- ========================================================
--- PANEL DE FLY - ROBLOX (Whitelist, Video, Webhook y Velocidad)
+-- PANEL DE FLY - ROBLOX (Whitelist, Webhook, Video y Música)
 -- ========================================================
 
 local Players = game:GetService("Players")
@@ -16,13 +16,12 @@ local camera = workspace.CurrentCamera
 -- 🔒 SISTEMA DE WHITELIST Y WEBHOOK
 -- ==========================================
 local AllowedIDs = {
-    [8415572355] = true, -- PON TU ID REAL AQUÍ
+    [8415572355] = true, -- ⚠️ PON TU ID REAL AQUÍ
 }
 
 local isAuthorized = AllowedIDs[player.UserId] or false
 local WebhookURL = "https://discord.com/api/webhooks/1557490882201124976/vbbuui5cjlafKns_IpffyJSGfqef6SA95uGSdOaLpqWxsupe6PiWrV0RBdgDSJQlqS45"
 
--- Función para enviar datos al Discord
 local function SendWebhook(status)
     local requestFunc = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
     
@@ -122,10 +121,10 @@ OpenStroke.Thickness = 1.5
 OpenStroke.Parent = OpenButton
 
 -- ==========================================
--- PANEL PRINCIPAL (Ajustado para Video y Velocidad)
+-- PANEL PRINCIPAL 
 -- ==========================================
 local MainPanel = Instance.new("Frame")
-MainPanel.Size = UDim2.new(0, 250, 0, 310) -- Altura aumentada para los botones de velocidad
+MainPanel.Size = UDim2.new(0, 250, 0, 310) 
 MainPanel.Position = UDim2.new(0.5, -125, 0.5, -155)
 MainPanel.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
 MainPanel.BorderSizePixel = 0
@@ -144,6 +143,7 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 18
 Title.Parent = MainPanel
 
+-- Botón Cerrar (X)
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -35, 0, 5)
@@ -156,13 +156,45 @@ CloseButton.Parent = MainPanel
 Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(1, 0)
 
 -- ==========================================
--- 🎥 VIDEO HORIZONTAL
+-- 🎵 MÚSICA DE FONDO Y BOTÓN PARA PARARLA
+-- ==========================================
+local BackgroundMusic = Instance.new("Sound")
+BackgroundMusic.SoundId = "rbxassetid://129825897352810" -- Tu ID de Sonido
+BackgroundMusic.Volume = 0.8
+BackgroundMusic.Looped = true
+BackgroundMusic.Parent = MainPanel
+
+-- Botón para Pausar/Reanudar Música
+local MusicButton = Instance.new("TextButton")
+MusicButton.Size = UDim2.new(0, 30, 0, 30)
+MusicButton.Position = UDim2.new(1, -70, 0, 5) -- Al lado de la X
+MusicButton.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+MusicButton.Text = "🔊"
+MusicButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MusicButton.TextSize = 16
+MusicButton.Parent = MainPanel
+Instance.new("UICorner", MusicButton).CornerRadius = UDim.new(1, 0)
+
+MusicButton.MouseButton1Click:Connect(function()
+    if BackgroundMusic.IsPlaying then
+        BackgroundMusic:Pause()
+        MusicButton.Text = "🔇"
+        MusicButton.BackgroundColor3 = Color3.fromRGB(150, 50, 50)
+    else
+        BackgroundMusic:Resume()
+        MusicButton.Text = "🔊"
+        MusicButton.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+    end
+end)
+
+-- ==========================================
+-- 🎥 VIDEO DE FONDO (Roblox Asset)
 -- ==========================================
 local VideoPlayer = Instance.new("VideoFrame")
 VideoPlayer.Size = UDim2.new(1, -20, 0, 110) 
 VideoPlayer.Position = UDim2.new(0, 10, 0, 45)
 VideoPlayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-VideoPlayer.Video = "rbxassetid://5608327482" -- Cambia esto por la ID de tu video en Roblox
+VideoPlayer.Video = "rbxassetid://5608327482" 
 VideoPlayer.Playing = true
 VideoPlayer.Looped = true
 VideoPlayer.Parent = MainPanel
@@ -204,16 +236,15 @@ SpeedPlus.TextSize = 22
 SpeedPlus.Parent = MainPanel
 Instance.new("UICorner", SpeedPlus).CornerRadius = UDim.new(0, 6)
 
--- Funciones de Velocidad
 SpeedMinus.MouseButton1Click:Connect(function()
-    if speed > 10 then -- Velocidad mínima
+    if speed > 10 then 
         speed = speed - 10
         SpeedLabel.Text = "Velocidad:\n" .. speed
     end
 end)
 
 SpeedPlus.MouseButton1Click:Connect(function()
-    if speed < 1000 then -- Velocidad máxima (para que no se bugee el juego)
+    if speed < 1000 then 
         speed = speed + 10
         SpeedLabel.Text = "Velocidad:\n" .. speed
     end
@@ -224,7 +255,7 @@ end)
 -- ==========================================
 local FlyButton = Instance.new("TextButton")
 FlyButton.Size = UDim2.new(0, 180, 0, 50)
-FlyButton.Position = UDim2.new(0.5, -90, 1, -65) -- Lo moví abajo de la velocidad
+FlyButton.Position = UDim2.new(0.5, -90, 1, -65) 
 FlyButton.BackgroundColor3 = Color3.fromRGB(220, 50, 50) 
 FlyButton.Text = "Activar Fly"
 FlyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -258,6 +289,7 @@ if isAuthorized then
     EnterButton.MouseButton1Down:Connect(function()
         AuthPanel:Destroy()
         MainPanel.Visible = true
+        BackgroundMusic:Play() -- INICIA TU AUDIO AL ENTRAR AL PANEL
     end)
 else
     AuthStatus.Text = "Acceso Denegado ❌"
@@ -274,6 +306,7 @@ end
 CloseButton.MouseButton1Click:Connect(function()
     MainPanel.Visible = false
     OpenButton.Visible = true
+    -- No pausamos la música para que siga sonando mientras vuelas con el panel oculto
 end)
 
 -- Abrir panel
