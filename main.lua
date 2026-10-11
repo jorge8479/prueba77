@@ -15,14 +15,14 @@ local camera = workspace.CurrentCamera
 -- ==========================================
 local AllowedIDs = {
     [8415572355] = true, -- Reemplaza 123456789 con tu ID de Roblox
-    [] = true, -- Puedes agregar más IDs si quieres que un amigo también tenga acceso
+    [8415572355] = true, -- Puedes agregar más IDs si quieres que un amigo también tenga acceso
 }
 
 local isAuthorized = AllowedIDs[player.UserId] or false
 
 -- Variables de vuelo
 local flying = false
-local speed = 200
+local speed = 500
 local bg, bv
 
 -- ==========================================
