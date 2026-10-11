@@ -14,7 +14,7 @@ local camera = workspace.CurrentCamera
 -- 🔒 SISTEMA DE WHITELIST (PON TU ID AQUÍ)
 -- ==========================================
 local AllowedIDs = {
-    [] = true, -- Reemplaza 123456789 con tu ID de Roblox
+    [8415572355] = true, -- Reemplaza 123456789 con tu ID de Roblox
     [] = true, -- Puedes agregar más IDs si quieres que un amigo también tenga acceso
 }
 
