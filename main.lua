@@ -1,5 +1,5 @@
 -- ========================================================
--- PANEL DE FLY - ROBLOX (Whitelist, Webhook, Video y Música)
+-- PANEL DE FLY - ROBLOX (Whitelist, Webhook, Video y Música Corregida)
 -- ========================================================
 
 local Players = game:GetService("Players")
@@ -8,6 +8,7 @@ local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 local MarketplaceService = game:GetService("MarketplaceService")
+local SoundService = game:GetService("SoundService") -- AÑADIDO PARA LA MÚSICA
 
 local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
@@ -156,18 +157,19 @@ CloseButton.Parent = MainPanel
 Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(1, 0)
 
 -- ==========================================
--- 🎵 MÚSICA DE FONDO Y BOTÓN PARA PARARLA
+-- 🎵 MÚSICA DE FONDO (CORREGIDA)
 -- ==========================================
 local BackgroundMusic = Instance.new("Sound")
-BackgroundMusic.SoundId = "rbxassetid://108337490519981" -- ID Actualizada
-BackgroundMusic.Volume = 0.8
+BackgroundMusic.SoundId = "rbxassetid://108337490519981" -- Tu ID de Sonido
+BackgroundMusic.Volume = 1 -- Volumen al máximo
 BackgroundMusic.Looped = true
-BackgroundMusic.Parent = MainPanel
+-- LA MANDAMOS A SOUNDSERVICE PARA QUE NO SE BUGUEE EL AUDIO
+BackgroundMusic.Parent = SoundService 
 
 -- Botón para Pausar/Reanudar Música
 local MusicButton = Instance.new("TextButton")
 MusicButton.Size = UDim2.new(0, 30, 0, 30)
-MusicButton.Position = UDim2.new(1, -70, 0, 5) -- Al lado de la X
+MusicButton.Position = UDim2.new(1, -70, 0, 5) 
 MusicButton.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
 MusicButton.Text = "🔊"
 MusicButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -289,7 +291,7 @@ if isAuthorized then
     EnterButton.MouseButton1Down:Connect(function()
         AuthPanel:Destroy()
         MainPanel.Visible = true
-        BackgroundMusic:Play() -- INICIA TU AUDIO AL ENTRAR AL PANEL
+        BackgroundMusic:Play() -- INICIA LA MÚSICA
     end)
 else
     AuthStatus.Text = "Acceso Denegado ❌"
@@ -306,7 +308,6 @@ end
 CloseButton.MouseButton1Click:Connect(function()
     MainPanel.Visible = false
     OpenButton.Visible = true
-    -- No pausamos la música para que siga sonando mientras vuelas con el panel oculto
 end)
 
 -- Abrir panel
