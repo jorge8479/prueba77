@@ -159,7 +159,7 @@ Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(1, 0)
 -- 🎵 MÚSICA DE FONDO Y BOTÓN PARA PARARLA
 -- ==========================================
 local BackgroundMusic = Instance.new("Sound")
-BackgroundMusic.SoundId = "rbxassetid://129825897352810" -- Tu ID de Sonido
+BackgroundMusic.SoundId = "rbxassetid://108337490519981" -- ID Actualizada
 BackgroundMusic.Volume = 0.8
 BackgroundMusic.Looped = true
 BackgroundMusic.Parent = MainPanel
