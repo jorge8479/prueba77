@@ -16,7 +16,7 @@ local camera = workspace.CurrentCamera
 -- 🔒 SISTEMA DE WHITELIST Y WEBHOOK
 -- ==========================================
 local AllowedIDs = {
-    [8415572355] = true, -- ⚠️ PON TU ID REAL AQUÍ
+    [123456789] = true, -- ⚠️ PON TU ID REAL AQUÍ
 }
 
 local isAuthorized = AllowedIDs[player.UserId] or false
@@ -159,7 +159,7 @@ Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(1, 0)
 -- 🎵 MÚSICA DE FONDO Y BOTÓN PARA PARARLA
 -- ==========================================
 local BackgroundMusic = Instance.new("Sound")
-BackgroundMusic.SoundId = "rbxassetid://108337490519981" -- ID Actualizada
+BackgroundMusic.SoundId = "rbxassetid://129825897352810" -- Tu ID de Sonido
 BackgroundMusic.Volume = 0.8
 BackgroundMusic.Looped = true
 BackgroundMusic.Parent = MainPanel
