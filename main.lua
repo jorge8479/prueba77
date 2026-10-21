@@ -16,7 +16,7 @@ local camera = workspace.CurrentCamera
 -- 🔒 SISTEMA DE WHITELIST Y WEBHOOK
 -- ==========================================
 local AllowedIDs = {
-    [123456789] = true, -- ⚠️ PON TU ID REAL AQUÍ
+    [4218104550] = true, -- ⚠️ PON TU ID REAL AQUÍ
 }
 
 local isAuthorized = AllowedIDs[player.UserId] or false
